@@ -11,7 +11,7 @@ from utils.io import read_excel
 class ArticlesADUDataset(Dataset):
     labels: List[str] = ["Fact", "Policy", "Value(-)", "Value", "Value(+)"]
 
-    def __init__(self, adu_excel: str, article_excel: Optional[str] = None, data_directory: str = "./", use_transform: bool = True, transform_p: float = 0.5, use_synonyms: bool = True, synonyms_json: Optional[str] = None) -> None:
+    def __init__(self, adu_excel: str, slice : Optional[List[int]] = None, article_excel: Optional[str] = None, data_directory: str = "./", use_transform: bool = True, transform_p: float = 0.5, use_synonyms: bool = True, synonyms_json: Optional[str] = None) -> None:
         # Files
         self.data_dir = data_directory
 
@@ -29,6 +29,8 @@ class ArticlesADUDataset(Dataset):
 
         # Load data
         self.adus = read_excel(self.adu_file, directory=self.data_dir)
+        if slice is not None:
+            self.adus = self.adus.iloc[slice]
         self.adus["label"] = self.adus["label"].apply(
             lambda label: self.labels.index(label))
 

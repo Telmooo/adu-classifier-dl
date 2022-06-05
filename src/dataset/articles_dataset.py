@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 import json
 from torch.utils.data import Dataset
@@ -8,7 +8,7 @@ import warnings
 from utils.io import read_excel
 
 class ArticlesDataset(Dataset):
-    def __init__(self, article_excel : str, data_directory : str = "./", use_transform: bool = True, transform_p: float = 0.5, use_synonyms: bool = True, synonyms_json: Optional[str] = None) -> None:
+    def __init__(self, article_excel : str, slice : Optional[List[int]] = None, data_directory : str = "./", use_transform: bool = True, transform_p: float = 0.5, use_synonyms: bool = True, synonyms_json: Optional[str] = None) -> None:
         # Files
         self.data_dir = data_directory
         self.article_file = article_excel
@@ -21,6 +21,8 @@ class ArticlesDataset(Dataset):
 
         # Load data
         self.articles = read_excel(self.article_file, directory=self.data_dir)
+        if slice is not None:
+            self.articles = self.articles.iloc[slice]
 
         if self.use_transform and self.use_synonyms:
             if self.synonnyms_file is None:
